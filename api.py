@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from tiktok_uploader.tiktok import Tiktok  # Import the Tiktok class
+from tiktok_uploader.tiktok import upload_to_tiktok_wrapper  # Import the wrapper function
 
 app = Flask(__name__)
 
@@ -8,6 +8,9 @@ API_KEY = "A9vX3kL5T7N8qW2pJ6M4R1yZ0C"
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    """
+    API endpoint to upload videos to TikTok.
+    """
     # Validate API key
     if request.headers.get("Authorization") != f"Bearer {API_KEY}":
         return jsonify({"error": "Unauthorized"}), 401
@@ -32,16 +35,14 @@ def upload():
     video_file.save(video_path)
 
     # Attempt to upload the video to TikTok
-    try:
-        # Initialize the Tiktok uploader with the provided username
-        uploader = Tiktok(username)
+    response = upload_to_tiktok_wrapper(video_path, username, title)
 
-        # Upload the video with the given title
-        response = uploader.upload(video_path, title)
+    # Return the result of the upload
+    if response.get("success"):
+        return jsonify(response), 200
+    else:
+        return jsonify(response), 400
 
-        return jsonify({"message": "Video uploaded successfully", "response": response}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
