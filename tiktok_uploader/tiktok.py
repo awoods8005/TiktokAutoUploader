@@ -448,34 +448,3 @@ if __name__ == "__main__":
 	      f"")
 
 
-def upload_to_tiktok_wrapper(video_path, username, title):
-    """
-    Wrapper to simplify video uploads to TikTok.
-
-    :param video_path: Path to the video file.
-    :param username: TikTok username associated with the session.
-    :param title: Title of the video.
-    :return: Success message or error details.
-    """
-    try:
-        # Call the existing `upload_video` function
-        result = upload_video(
-            session_user=username,
-            video=video_path,
-            title=title,
-            schedule_time=0,        # No scheduling by default
-            allow_comment=1,        # Allow comments
-            allow_duet=1,           # Allow duet
-            allow_stitch=1,         # Allow stitching
-            visibility_type=0,      # Public visibility
-        )
-        
-        if result:
-            return {"success": True, "message": "Video uploaded successfully"}
-        else:
-            return {"success": False, "error": "Video upload failed"}
-
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-
